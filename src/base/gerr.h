@@ -34,7 +34,6 @@ namespace g {
 // ----------------------------------------------------------------------------
 struct GErr {
   virtual ~GErr() {}
-
   virtual const char* name() = 0;
   virtual int code() = 0;
   virtual QString msg() = 0;
