@@ -1,5 +1,5 @@
 #include <QApplication>
-#include <GJson>
+#include <GJsonAux>
 #include <GPropWidget>
 
 #include "party.h"
@@ -30,3 +30,4 @@ int main(int argc, char *argv[]) {
 
   return res;
 }
+
