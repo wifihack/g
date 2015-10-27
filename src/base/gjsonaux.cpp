@@ -26,7 +26,20 @@ QJsonValueRef& operator >> (const QJsonValueRef&& ref, QList<int>& intList) {
 #include <QPoint>
 #include <QSize>
 
-QJsonObject& operator << (QJsonObject& json, QWidget& widget) {
+QJsonValueRef& operator << (QJsonValueRef&& ref, const QWidget& widget) {
+  QJsonObject json;
+  json << widget;
+  ref = json;
+  return ref;
+}
+
+QJsonValueRef& operator >> (const QJsonValueRef&& ref, QWidget& widget) {
+  QJsonObject json = ref.toObject();
+  json >> widget;
+  return (QJsonValueRef&)ref;
+}
+
+QJsonObject& operator << (QJsonObject& json, const QWidget& widget) {
   QPoint pos = widget.pos();
   json["left"] = pos.x();
   json["top"] = pos.y();

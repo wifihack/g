@@ -21,6 +21,8 @@ QJsonValueRef& operator << (QJsonValueRef&& ref, const QList<int>& intList);
 QJsonValueRef& operator >> (const QJsonValueRef&& ref, QList<int>& intList);
 
 #ifdef QT_GUI_LIB
-QJsonObject& operator << (QJsonObject& json, QWidget& widget);
+QJsonValueRef& operator << (QJsonValueRef&& ref, const QWidget& widget);
+QJsonValueRef& operator >> (const QJsonValueRef&& ref, QWidget& widget);
+QJsonObject& operator << (QJsonObject& json, const QWidget& widget);
 QJsonObject& operator >> (const QJsonObject& json, QWidget& widget);
 #endif // QT_GUI_LIB
