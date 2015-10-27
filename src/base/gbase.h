@@ -10,6 +10,5 @@
 
 #pragma once
 
-namespace g {
-  extern const char* VERSION;
-}
+extern const char* GVERSION;
+
