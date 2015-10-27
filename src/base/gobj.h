@@ -28,9 +28,6 @@ public:
   GObj(GObj* parent = nullptr) : QObject(parent) {}
   ~GObj() override;
 
-  virtual bool open();
-  virtual bool close();
-
   virtual void load(const QJsonObject json);
   virtual void save(QJsonObject& json);
 
