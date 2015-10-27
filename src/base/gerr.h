@@ -19,13 +19,13 @@
 // ----------------------------------------------------------------------------
 struct GErr {
   enum {
-    GERR_OK = 0,
-    GERR_OK_FAIL = -1,
-    GERR_OK_UNKNOWN = 1000,
-    GERR_OK_NOT_SUPPORTED,
-    GERR_OK_VIRTUAL_FUNCTION_CALL,
-    GERR_OK_VALUE_IS_NULL,
-    GERR_OK_VALUE_IS_NOT_NULL,
+    OK = 0,
+    FAIL = -1,
+    UNKNOWN = 1000,
+    NOT_SUPPORTED,
+    VIRTUAL_FUNCTION_CALL,
+    VALUE_IS_NULL,
+    VALUE_IS_NOT_NULL,
   };
 
   enum {
@@ -62,7 +62,7 @@ protected:
 // GStdErr
 // ----------------------------------------------------------------------------
 struct GStdErr : GErr {
-  GStdErr() :code_(GERR_OK) {}
+  GStdErr() :code_(OK) {}
   GStdErr(int code) : code_(code) {}
   GStdErr(int code, QString msg) : code_(code), msg_(msg) {}
 

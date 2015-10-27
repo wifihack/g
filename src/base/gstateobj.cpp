@@ -14,11 +14,11 @@ bool GStateObj::active() {
 }
 
 bool GStateObj::open() {
-  SET_ERR(GStdErr(g::VIRTUAL_FUNCTION_CALL, "virtual function call"));
+  SET_ERR(GStdErr(GErr::VIRTUAL_FUNCTION_CALL, "virtual function call"));
   return false;
 }
 
 bool GStateObj::close() {
-  SET_ERR(GStdErr(g::VIRTUAL_FUNCTION_CALL, "virtual function call"));
+  SET_ERR(GStdErr(GErr::VIRTUAL_FUNCTION_CALL, "virtual function call"));
   return false;
 }
