@@ -2,72 +2,80 @@
 #include "gobj.h"
 
 // ----------------------------------------------------------------------------
-// operator
+// QList<int>
 // ----------------------------------------------------------------------------
-QJsonValueRef& operator << (QJsonValueRef&& ref, const QList<int>& intList) {
+QJsonValueRef operator << (QJsonValueRef ref, const QList<int>& intList) {
   QStringList strList;
   for(int i: intList) {
     QString s = QString::number(i);
     strList.append(s);
   }
+
   ref = strList.join(',');
   return ref;
 }
 
-QJsonValueRef& operator >> (const QJsonValueRef&& ref, QList<int>& intList) {
+QJsonValueRef operator >> (const QJsonValueRef ref, QList<int>& intList) {
   QString s = ref.toString();
+
   if (s != "") {
     QStringList strList = ref.toString().split(',');
     for(QString s: strList) {
       intList.append(s.toInt());
     }
   }
-  return (QJsonValueRef&)ref;
+
+  return ref;
 }
 
-QJsonValueRef& operator << (QJsonValueRef&& ref, const GObj& obj) {
+// ----------------------------------------------------------------------------
+// GObj
+// ----------------------------------------------------------------------------
+QJsonValueRef operator << (QJsonValueRef ref, const GObj& obj) {
   QJsonObject json;
-  json << obj;
+
+  ((GObj&)obj).save(json);
+
   ref = json;
   return ref;
 }
 
-QJsonValueRef& operator >> (const QJsonValueRef&& ref, GObj& obj) {
+QJsonValueRef operator >> (const QJsonValueRef ref, GObj& obj) {
   QJsonObject json = ref.toObject();
-  json >> obj;
-  return (QJsonValueRef&)ref;
-}
 
-QJsonObject& operator << (QJsonObject& json, const GObj& obj) {
-  ((GObj&)obj).save(json);
-  return json;
-}
-
-QJsonObject& operator >> (const QJsonObject& json, GObj& obj) {
-  if (!json.empty())
+  if (!json.empty()) {
     obj.load(json);
-  return (QJsonObject&)json;
+  }
+
+  return ref;
 }
 
 #ifdef QT_GUI_LIB
 
-#include <QPoint>
-#include <QSize>
-
-QJsonValueRef& operator << (QJsonValueRef&& ref, const QWidget& widget) {
-  QJsonObject json;
-  json << widget;
-  ref = json;
+// ----------------------------------------------------------------------------
+// QSplitter
+// ----------------------------------------------------------------------------
+QJsonValueRef operator << (QJsonValueRef ref, const QSplitter& splitter) {
+  ref << splitter.sizes();
   return ref;
 }
 
-QJsonValueRef& operator >> (const QJsonValueRef&& ref, QWidget& widget) {
-  QJsonObject json = ref.toObject();
-  json >> widget;
-  return (QJsonValueRef&)ref;
+QJsonValueRef operator >> (const QJsonValueRef ref, QSplitter& splitter) {
+  QList<int> sizes;
+  ref >> sizes;
+  if (sizes.count() != 0)
+    splitter.setSizes(sizes);
+  return ref;
 }
 
-QJsonObject& operator << (QJsonObject& json, const QWidget& widget) {
+// ----------------------------------------------------------------------------
+// QWidget
+// ----------------------------------------------------------------------------
+#include <QPoint>
+#include <QSize>
+QJsonValueRef operator << (QJsonValueRef ref, const QWidget& widget) {
+  QJsonObject json;
+
   QPoint pos = widget.pos();
   json["left"] = pos.x();
   json["top"] = pos.y();
@@ -76,23 +84,26 @@ QJsonObject& operator << (QJsonObject& json, const QWidget& widget) {
   json["width"] = size.width();
   json["height"] = size.height();
 
-  return json;
+  ref = json;
+  return ref;
 }
 
-QJsonObject& operator >> (const QJsonObject& json, QWidget& widget) {
-  if (json.isEmpty()) return (QJsonObject&)json;
+QJsonValueRef operator >> (QJsonValueRef ref, QWidget& widget) {
+  QJsonObject json = ref.toObject();
 
-  QPoint pos;
-  pos.setX(json["left"].toInt());
-  pos.setY(json["top"].toInt());
-  widget.move(pos);
+  if (!json.isEmpty()) {
+    QPoint pos;
+    pos.setX(json["left"].toInt());
+    pos.setY(json["top"].toInt());
+    widget.move(pos);
 
-  QSize size;
-  size.setWidth(json["width"].toInt());
-  size.setHeight(json["height"].toInt());
-  widget.resize(size);
+    QSize size;
+    size.setWidth(json["width"].toInt());
+    size.setHeight(json["height"].toInt());
+    widget.resize(size);
+  }
 
-  return (QJsonObject&)json;
+  return ref;
 }
 
 #endif // QT_GUI_LIB

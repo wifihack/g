@@ -9,26 +9,35 @@
 // ----------------------------------------------------------------------------
 
 #include <QList>
-#ifdef QT_GUI_LIB
-#include <QWidget>
-#endif // QT_GUI_LIB
 #include "gjson.h"
 
 // ----------------------------------------------------------------------------
-// operator
+// QList<int>
 // ----------------------------------------------------------------------------
-QJsonValueRef& operator << (QJsonValueRef&& ref, const QList<int>& intList);
-QJsonValueRef& operator >> (const QJsonValueRef&& ref, QList<int>& intList);
+QJsonValueRef operator << (QJsonValueRef ref, const QList<int>& intList);
+QJsonValueRef operator >> (QJsonValueRef ref, QList<int>& intList);
 
+// ----------------------------------------------------------------------------
+// GObj
+// ----------------------------------------------------------------------------
 class GObj;
-QJsonValueRef& operator << (QJsonValueRef&& ref, const GObj& obj);
-QJsonValueRef& operator >> (const QJsonValueRef&& ref, GObj& obj);
-QJsonObject& operator << (QJsonObject& json, const GObj& obj);
-QJsonObject& operator >> (const QJsonObject& json, GObj& obj);
+QJsonValueRef operator << (QJsonValueRef ref, const GObj& obj);
+QJsonValueRef operator >> (QJsonValueRef ref, GObj& obj);
 
 #ifdef QT_GUI_LIB
-QJsonValueRef& operator << (QJsonValueRef&& ref, const QWidget& widget);
-QJsonValueRef& operator >> (const QJsonValueRef&& ref, QWidget& widget);
-QJsonObject& operator << (QJsonObject& json, const QWidget& widget);
-QJsonObject& operator >> (const QJsonObject& json, QWidget& widget);
+
+// ----------------------------------------------------------------------------
+// QSplitter
+// ----------------------------------------------------------------------------
+#include <QSplitter>
+QJsonValueRef operator << (QJsonValueRef ref, const QSplitter& splitter);
+QJsonValueRef operator >> (QJsonValueRef ref, QSplitter& splitter);
+
+// ----------------------------------------------------------------------------
+// QWidget
+// ----------------------------------------------------------------------------
+#include <QWidget>
+QJsonValueRef operator << (QJsonValueRef ref, const QWidget& widget);
+QJsonValueRef operator >> (QJsonValueRef ref, QWidget& widget);
+
 #endif // QT_GUI_LIB
