@@ -7,7 +7,7 @@ GObj::~GObj() {
   }
 }
 
-void GObj::load(const QJsonObject json) {
+void GObj::load(QJsonObject json) {
   const QMetaObject* mobj = metaObject();
   int count = mobj->propertyCount();
   for (int i = 0; i < count; i++) {
@@ -25,10 +25,10 @@ void GObj::save(QJsonObject& json) {
   }
 }
 
-bool GObj::load(const QJsonObject json, QMetaProperty mpro) {
+bool GObj::load(QJsonObject json, QMetaProperty mpro) {
   const char* propName = mpro.name();
   int userType = mpro.userType();
-  QVariant variant = json[propName];
+  QVariant variant = ((const QJsonObject)json)[propName];
   bool res = false;
 
   if (mpro.isEnumType()) {

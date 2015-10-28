@@ -28,10 +28,10 @@ public:
   GObj(GObj* parent = nullptr) : QObject(parent) {}
   ~GObj() override;
 
-  virtual void load(const QJsonObject json);
+  virtual void load(QJsonObject json);
   virtual void save(QJsonObject& json);
 
-  virtual bool load(const QJsonObject json, QMetaProperty mpro);
+  virtual bool load(QJsonObject json, QMetaProperty mpro);
   virtual bool save(QJsonObject& json, QMetaProperty mpro);
 
 #ifdef QT_GUI_LIB

@@ -15,7 +15,7 @@
 // QList<int>
 // ----------------------------------------------------------------------------
 QJsonValueRef operator << (QJsonValueRef ref, const QList<int>& intList);
-QJsonValueRef operator >> (QJsonValueRef ref, QList<int>& intList);
+QJsonValueRef operator >> (const QJsonValueRef ref, QList<int>& intList);
 
 // ----------------------------------------------------------------------------
 // GObj
@@ -30,14 +30,14 @@ QJsonValueRef operator >> (QJsonValueRef ref, GObj& obj);
 // QSplitter
 // ----------------------------------------------------------------------------
 #include <QSplitter>
-QJsonValueRef operator << (QJsonValueRef ref, const QSplitter& splitter);
-QJsonValueRef operator >> (QJsonValueRef ref, QSplitter& splitter);
+QJsonValueRef operator << (QJsonValueRef ref, const QSplitter* splitter);
+QJsonValueRef operator >> (QJsonValueRef ref, QSplitter* splitter);
 
 // ----------------------------------------------------------------------------
 // QWidget
 // ----------------------------------------------------------------------------
 #include <QWidget>
-QJsonValueRef operator << (QJsonValueRef ref, const QWidget& widget);
-QJsonValueRef operator >> (QJsonValueRef ref, QWidget& widget);
+QJsonValueRef operator << (const QJsonValueRef ref, const QWidget* widget);
+QJsonValueRef operator >> (QJsonValueRef ref, QWidget* widget);
 
 #endif // QT_GUI_LIB
