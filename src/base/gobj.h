@@ -45,4 +45,9 @@ public:
 // ----------------------------------------------------------------------------
 // SET_ERR
 // ----------------------------------------------------------------------------
-#define SET_ERR(VALUE) if (err != nullptr) delete err; err = new VALUE; qWarning() << err;
+#define SET_ERR(VALUE) { \
+  if (err != nullptr) \
+    delete err; \
+  err = new VALUE; \
+  qWarning() << err; \
+}

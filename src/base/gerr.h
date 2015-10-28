@@ -11,7 +11,8 @@
 #pragma once
 
 #include <errno.h>
-#include <ostream>
+//#include <ostream>
+#include <QDebug>
 #include <QString>
 
 // ----------------------------------------------------------------------------
@@ -38,9 +39,16 @@ struct GErr {
   virtual QString msg() = 0;
 };
 
+// ----- gilgil temp 2015.10.28 -----
+/*
 std::ostream& operator << (std::ostream& os, GErr& err);
 std::ostream& operator << (std::ostream& os, GErr&& err);
 std::ostream& operator << (std::ostream& os, GErr* err);
+*/
+QDebug operator << (QDebug os, GErr& err);
+QDebug operator << (QDebug os, GErr&& err);
+QDebug operator << (QDebug os, GErr* err);
+// ----------------------------------
 
 // ----------------------------------------------------------------------------
 // GLastErr
