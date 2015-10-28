@@ -24,9 +24,13 @@ struct GErr {
     FAIL = -1,
     UNKNOWN = 1000,
     NOT_SUPPORTED,
+    NOT_OPENED_STATE,
+    NOT_CLOSED_STATE,
     VIRTUAL_FUNCTION_CALL,
     VALUE_IS_NULL,
     VALUE_IS_NOT_NULL,
+    RETURN_NULL,
+    RETURN_NOT_NULL,
   };
 
   enum {
@@ -70,7 +74,7 @@ protected:
 // GStdErr
 // ----------------------------------------------------------------------------
 struct GStdErr : GErr {
-  GStdErr() :code_(OK) {}
+  GStdErr() : code_(OK) {}
   GStdErr(int code) : code_(code) {}
   GStdErr(int code, QString msg) : code_(code), msg_(msg) {}
 
