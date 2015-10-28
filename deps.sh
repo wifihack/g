@@ -10,3 +10,7 @@ sudo apt-get install libglu1-mesa-dev
 # libevent-dev
 # sudo apt-get install libevent-dev # gilgil temp 2015.10.25
 
+# libpcap-dev
+sudo apt-get install libpcap-dev
+
+
