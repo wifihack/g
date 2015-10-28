@@ -15,9 +15,12 @@ QJsonValueRef& operator << (QJsonValueRef&& ref, const QList<int>& intList) {
 }
 
 QJsonValueRef& operator >> (const QJsonValueRef&& ref, QList<int>& intList) {
-  QStringList strList = ref.toString().split(',');
-  for(QString s: strList) {
-    intList.append(s.toInt());
+  QString s = ref.toString();
+  if (s != "") {
+    QStringList strList = ref.toString().split(',');
+    for(QString s: strList) {
+      intList.append(s.toInt());
+    }
   }
   return (QJsonValueRef&)ref;
 }
