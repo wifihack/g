@@ -1,4 +1,5 @@
 #include "gjsonaux.h"
+#include "gobj.h"
 
 // ----------------------------------------------------------------------------
 // operator
@@ -19,6 +20,30 @@ QJsonValueRef& operator >> (const QJsonValueRef&& ref, QList<int>& intList) {
     intList.append(s.toInt());
   }
   return (QJsonValueRef&)ref;
+}
+
+QJsonValueRef& operator << (QJsonValueRef&& ref, const GObj& obj) {
+  QJsonObject json;
+  json << obj;
+  ref = json;
+  return ref;
+}
+
+QJsonValueRef& operator >> (const QJsonValueRef&& ref, GObj& obj) {
+  QJsonObject json = ref.toObject();
+  json >> obj;
+  return (QJsonValueRef&)ref;
+}
+
+QJsonObject& operator << (QJsonObject& json, const GObj& obj) {
+  ((GObj&)obj).save(json);
+  return json;
+}
+
+QJsonObject& operator >> (const QJsonObject& json, GObj& obj) {
+  if (!json.empty())
+    obj.load(json);
+  return (QJsonObject&)json;
 }
 
 #ifdef QT_GUI_LIB
