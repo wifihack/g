@@ -65,11 +65,12 @@ void GCapture::run() {
   qDebug() << "stt"; // gilgil temp 2015.10.28
   while (active()) {
     GPacket packet;
+    packet.clear();
     packet.capture = this;
     Result res = read(&packet);
     if (res == TimeOut) continue;
     if (res == Eof || res == Fail) break;
-    if (autoParse_) packet.parse();;
+    if (autoParse_) packet.parse();
     emit captured(&packet);
     if (this->pathType() == InPath) {
       res = relay(&packet);

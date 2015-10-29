@@ -14,5 +14,5 @@
 // GApp
 // ----------------------------------------------------------------------------
 struct GApp {
-  static void initialize();
+  static void init();
 };

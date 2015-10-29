@@ -4,6 +4,6 @@
 // ----------------------------------------------------------------------------
 // GApp
 // ----------------------------------------------------------------------------
-void GApp::initialize() {
-  qSetMessagePattern("[%{file}:%{line}] %{threadid} %{message}");
+void GApp::init() {
+  qSetMessagePattern("%{time yyyyMMdd h:mm:ss.zzz t} [%{file}:%{line}] %{threadid} %{message}");
 }
