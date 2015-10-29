@@ -67,8 +67,6 @@ GCapture::Result GPcap::read(GPacket* packet) {
       res = TimeOut;
       break;
     default: // packet captured
-      packet->capture = this;
-      // if (autoParse_) parse(packet); // gilgil temp 2015.10.29
       res = Ok;
       break;
   }

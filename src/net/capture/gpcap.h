@@ -51,9 +51,6 @@ public:
   PathType captureType() { return OutOfPath; }
   int dataLink() { return dataLink_; }
 
-public:
-  void parse(GPacket* packet);
-
 protected:
   bool pcapProcessFilter(pcap_if_t* dev);
 
