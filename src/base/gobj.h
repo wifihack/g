@@ -15,6 +15,8 @@
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QObject>
+#include <QSharedPointer>
+#include "gbase.h"
 #include "gerr.h"
 #include "base/prop/gpropitem.h"
 
@@ -25,7 +27,7 @@ struct GObj : QObject {
   Q_OBJECT
 
 public:
-  GObj(GObj* parent = nullptr) : QObject(parent) {}
+  GObj(QObject* parent = nullptr) : QObject(parent) {}
   ~GObj() override;
 
   virtual void load(QJsonObject json);
@@ -39,15 +41,15 @@ public:
   virtual GPropItem* createPropItem(QTreeWidgetItem* parent, QObject* object, QMetaProperty mpro);
 #endif // QT_GUI_LIB
 
-  GErr* err{nullptr};
+  QSharedPointer<GErr> err{nullptr};
 };
 
 // ----------------------------------------------------------------------------
 // SET_ERR
 // ----------------------------------------------------------------------------
 #define SET_ERR(VALUE) { \
-  if (err != nullptr) \
-    delete err; \
-  err = new VALUE; \
-  qWarning() << err; \
+  if (err == nullptr) { \
+    err = QSharedPointer<GErr>(new VALUE); \
+    qWarning() << err; \
+  } \
 }

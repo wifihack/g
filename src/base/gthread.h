@@ -10,5 +10,11 @@
 
 #pragma once
 
-extern const char* G_VERSION;
-extern unsigned long G_TIMEOUT;
+#include <QThread>
+
+// ----------------------------------------------------------------------------
+// GThread
+// ----------------------------------------------------------------------------
+struct GThread : QThread {
+  GThread(QObject *parent = nullptr);
+};

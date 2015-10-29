@@ -8,6 +8,8 @@
 //
 // ----------------------------------------------------------------------------
 
+#pragma once
+
 #include "gobj.h"
 
 // ----------------------------------------------------------------------------
@@ -24,6 +26,7 @@ public:
     Closing
   } State;
 
+  GStateObj(QObject* parent = nullptr) : GObj(parent) {}
   ~GStateObj() override;
 
   bool active();
@@ -38,7 +41,7 @@ protected:
   virtual bool doOpen();
   virtual bool doClose();
 
-private:
+protected:
   State state_{Closed};
 };
 
