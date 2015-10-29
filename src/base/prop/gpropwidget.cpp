@@ -8,7 +8,11 @@
 // GPropWidget
 // ----------------------------------------------------------------------------
 GPropWidget::GPropWidget(QWidget *parent) : QTreeWidget(parent) {
+  static const int WIDTH = 480;
+  static const int HEIGHT = 480;
+  this->resize(WIDTH, HEIGHT);
   this->setColumnCount(2);
+  this->setColumnWidth(0, WIDTH / 2);
   this->setHeaderLabels(QStringList() << "property" << "value");
   QLayout* layout = new QGridLayout(this);
   layout->setMargin(0);
