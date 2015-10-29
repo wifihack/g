@@ -12,7 +12,7 @@
 
 #include "base/gstateobj.h"
 #include "base/gthread.h"
-#include "net/gpacket.h"
+#include "net/packet/gpacket.h"
 
 // ----------------------------------------------------------------------------
 // GCaptureThread

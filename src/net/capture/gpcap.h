@@ -33,7 +33,7 @@ public:
   QString filter_{""};
   int     snapLen_{65536}; // gilgil temp 2015.10.28
   int     flags_{1}; // PCAP_OPENFLAG_PROMISCUOUS
-  int     readTimeout_{1};
+  int     readTimeout_{1}; // 1 msec
 
 public:
   GPcap(QObject* parent = nullptr) : GCapture(parent) {}

@@ -7,7 +7,8 @@ SOURCES += \
 #  $${PWD}/../src/sys/stacktrace/*.cpp \ # gilgil temp 2015.10.25
 #  $${PWD}/../src/sys/timediff/*.cpp # gilgil temp 2015.10.25
   $${PWD}/../src/net/*.cpp \
-  $${PWD}/../src/net/capture/*.cpp
+  $${PWD}/../src/net/capture/*.cpp \
+  $${PWD}/../src/net/packet/*.cpp
 
 HEADERS += \
   $${PWD}/../src/base/*.h \
@@ -18,4 +19,6 @@ HEADERS += \
 #  $${PWD}/../src/sys/stacktrace/*.h \ # gilgil temp 2015.10.25
 #  $${PWD}/../src/sys/timediff/*.h # gilgil temp 2015.10.25
   $${PWD}/../src/net/*.h \
-  $${PWD}/../src/net/capture/*.h
+  $${PWD}/../src/net/capture/*.h \
+  $${PWD}/../src/net/packet/*.h \
+  $${PWD}/../src/net/libnet/*.h
