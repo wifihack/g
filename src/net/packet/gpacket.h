@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "gpacketheader.h"
+#include "gpackethdr.h"
 #ifdef WIN32
 #include <windivert/windivert.h>
 #endif // WIN32
@@ -41,29 +41,29 @@ struct GPacket {
   //
   // packet
   //
-  PKT_HDR* pktHdr;
+  GPktHdr* pktHdr;
   uint8_t* pktData;
 
   //
   // datalink layer
   //
   int      linkType; // DLT_EN10MB, ...
-  ETH_HDR* ethHdr;
+  GEthHdr* ethHdr;
 
   //
   // network layer
   //
   uint16_t netType; // ETHERTYPE_IP, ETHERTYPE_ARP, ...
-  IP_HDR*  ipHdr;
-  ARP_HDR* arpHdr;
+  GIpHdr*  ipHdr;
+  GArpHdr* arpHdr;
 
   //
   // transport layer(protocol)
   //
   uint8_t   proto; // IPPROTO_TCP, IPPROTO_UDP, IPPROTO_ICMP, ...
-  TCP_HDR*  tcpHdr;
-  UDP_HDR*  udpHdr;
-  ICMP_HDR* icmpHdr;
+  GTcpHdr*  tcpHdr;
+  GUdpHdr*  udpHdr;
+  GIcmpHdr* icmpHdr;
 
   //
   // data

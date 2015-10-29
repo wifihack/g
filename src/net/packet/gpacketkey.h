@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "gpacketheader.h"
+#include "gpackethdr.h"
 
 // ----------------------------------------------------------------------------
 // GMacKey

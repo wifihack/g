@@ -19,13 +19,9 @@
 #include "net/libnet/libnet-headers.h"
 #pragma pack(pop)
 
+#include <QList>
 #include "net/gmac.h"
 #include "net/gip.h"
-
-// ----------------------------------------------------------------------------
-// PKT_HDR
-// ----------------------------------------------------------------------------
-typedef struct pcap_pkthdr             PKT_HDR;
 
 // ----------------------------------------------------------------------------
 // Link Layer Type
@@ -287,110 +283,265 @@ typedef struct pcap_pkthdr             PKT_HDR;
 #endif
 
 // ----------------------------------------------------------------------------
-// Header
+// GPktHdr
 // ----------------------------------------------------------------------------
+typedef struct pcap_pkthdr             GPktHdr;
+
 #pragma pack(push, 1)
 
 // ----------------------------------------------------------------------------
-// ETH_HDR
+// GEthHdr
 // ----------------------------------------------------------------------------
-typedef struct // libnet_ethernet_hdr
-{
-    GMac ether_dhost;      /* destination ethernet address */
-    GMac ether_shost;      /* source ethernet address */
-    u_int16_t ether_type; /* protocol */
-} ETH_HDR;
+struct GIpHdr;
+struct GArpHdr;
+struct GEthHdr { // libnet_ethernet_hdr
+  GMac ether_dhost;     /* destination ethernet address */
+  GMac ether_shost;     /* source ethernet address */
+  u_int16_t ether_type; /* protocol */
+
+public:
+  bool is   (uint16_t etherType, void** networkHdr);
+  bool isIp (GIpHdr** ipHdr);
+  bool isArp(GArpHdr** arpHdr);
+};
 
 // ----------------------------------------------------------------------------
-// FDDI_HDR
+// GFddiHdr
 // ----------------------------------------------------------------------------
-typedef struct libnet_fddi_hdr FDDI_HDR;
+typedef struct libnet_fddi_hdr GFddiHdr;
 
 // ----------------------------------------------------------------------------
-// IP_HDR
+// GIpHdr
 // ----------------------------------------------------------------------------
-typedef struct IP_HDR // libnet_ipv4_hdr
-{
+struct GTcpHdr;
+struct GUdpHdr;
+struct GIcmpHdr;
+struct GIpHdr { // libnet_ipv4_hdr
 #if (LIBNET_LIL_ENDIAN)
-   u_int8_t ip_hl:4,        /* header length */
-      ip_v:4;         /* version */
+  u_int8_t  ip_hl:4,        /* header length */
+            ip_v:4;         /* version */
 #endif
 #if (LIBNET_BIG_ENDIAN)
-  u_int8_t ip_v:4,         /* version */
-       ip_hl:4;        /* header length */
+  u_int8_t  ip_v:4,         /* version */
+            ip_hl:4;        /* header length */
 #endif
-    u_int8_t ip_tos;       /* type of service */
-#ifndef IPTOS_LOWDELAY
-#define IPTOS_LOWDELAY      0x10
-#endif
-#ifndef IPTOS_THROUGHPUT
-#define IPTOS_THROUGHPUT    0x08
-#endif
-#ifndef IPTOS_RELIABILITY
-#define IPTOS_RELIABILITY   0x04
-#endif
-#ifndef IPTOS_LOWCOST
-#define IPTOS_LOWCOST       0x02
-#endif
+  u_int8_t  ip_tos;         /* type of service */
   u_int16_t ip_len;         /* total length */
   u_int16_t ip_id;          /* identification */
   u_int16_t ip_off;
-#ifndef IP_RF
-#define IP_RF 0x8000          /* reserved fragment flag */
-#endif
-#ifndef IP_DF
-#define IP_DF 0x4000          /* dont fragment flag */
-#endif
-#ifndef IP_MF
-#define IP_MF 0x2000          /* more fragments flag */
-#endif 
-#ifndef IP_OFFMASK
-#define IP_OFFMASK 0x1fff     /* mask for fragmenting bits */
-#endif
-  u_int8_t ip_ttl;          /* time to live */
-  u_int8_t ip_p;            /* protocol */
+  u_int8_t  ip_ttl;         /* time to live */
+  u_int8_t  ip_p;           /* protocol */
   u_int16_t ip_sum;         /* checksum */
-  u_int32_t ip_src, ip_dst; /* source and dest address */
-} IP_HDR;
+  GIp       ip_src, ip_dst; /* source and dest address */
+
+public:
+  bool is    (uint8_t protocol, void** transportHdr);
+  bool isTcp (GTcpHdr**  tcpHdr);
+  bool isUdp (GUdpHdr**  udpHdr);
+  bool isIcmp(GIcmpHdr** icmpHdr);
+  uint16_t checksum();
+  static uint16_t recalculateChecksum(uint16_t oldChecksum, uint16_t oldValue, uint16_t newValue);
+  static uint16_t recalculateChecksum(uint16_t oldChecksum, uint32_t oldValue, uint32_t newValue);
+};
 
 // ----------------------------------------------------------------------------
-// ARP_HDR
+// GArpHdr
 // ----------------------------------------------------------------------------
-typedef struct libnet_arp_hdr _ARP_HDR;
-typedef struct ARP_HDR : _ARP_HDR
-{
+struct GArpHdr : libnet_arp_hdr {
   GMac ar_sa;
   GIp  ar_si;
   GMac ar_ta;
   GIp  ar_ti;
-} ARP_HDR;
+};
 
 // ----------------------------------------------------------------------------
-// TCP_HDR
+// GTcpOption
 // ----------------------------------------------------------------------------
-typedef struct libnet_tcp_hdr TCP_HDR;
-
-// ----------------------------------------------------------------------------
-// UDP_HDR
-// ----------------------------------------------------------------------------
-typedef struct libnet_udp_hdr UDP_HDR;
-
-// ----------------------------------------------------------------------------
-// ICMP_HDR
-// ----------------------------------------------------------------------------
-typedef struct libnet_icmpv4_hdr ICMP_HDR;
-
-// ----------------------------------------------------------------------------
-// DNS_HDR
-// ----------------------------------------------------------------------------
-typedef struct DNS_HDR
+struct GTcpOption
 {
+  uint8_t kind;
+  uint8_t len;
+  uint8_t* value;
+  uint8_t* desc;
+};
+typedef QList<GTcpOption> GTcpOptionList;
+
+// ----------------------------------------------------------------------------
+/* from : http://www.iana.org/assignments/tcp-parameters
+
+TCP OPTION NUMBERS
+
+(last updated 2007-02-15)
+
+The Transmission Control Protocol (TCP) has provision for optional
+header fields identified by an option kind field.  Options 0 and 1 are
+exactly one octet which is their kind field.  All other options have
+their one octet kind field, followed by a one octet length field,
+followed by length-2 octets of option data.
+
+Kind   Length   Meaning                           Reference
+----   ------   -------------------------------   ---------
+  0        -    End of Option List                 [RFC793]
+  1        -    No-Operation                       [RFC793]
+  2        4    Maximum Segment Size               [RFC793]
+  3        3    WSOPT - Window Scale              [RFC1323]
+  4        2    SACK Permitted                    [RFC2018]
+  5        N    SACK                              [RFC2018]
+  6        6    Echo (obsoleted by option 8)      [RFC1072]
+  7        6    Echo Reply (obsoleted by option 8)[RFC1072]
+  8       10    TSOPT - Time Stamp Option         [RFC1323]
+  9        2    Partial Order Connection Permitted[RFC1693]
+   10        3    Partial Order Service Profile     [RFC1693]
+   11             CC                                [RFC1644]
+   12             CC.NEW                            [RFC1644]
+   13             CC.ECHO                           [RFC1644]
+   14         3   TCP Alternate Checksum Request    [RFC1146]
+   15         N   TCP Alternate Checksum Data       [RFC1146]
+   16             Skeeter                           [Knowles]
+   17             Bubba                             [Knowles]
+   18         3   Trailer Checksum Option    [Subbu & Monroe]
+   19        18   MD5 Signature Option              [RFC2385]
+   20             SCPS Capabilities                   [Scott]
+   21             Selective Negative Acknowledgements [Scott]
+   22             Record Boundaries                   [Scott]
+   23             Corruption experienced              [Scott]
+   24             SNAP         [Sukonnik]
+   25             Unassigned (released 12/18/00)
+   26             TCP Compression Filter           [Bellovin]
+   27          8  Quick-Start Response              [RFC4782]
+   28-252         Unassigned
+   253         N  RFC3692-style Experiment 1 (*)    [RFC4727]
+   254         N  RFC3692-style Experiment 2 (*)    [RFC4727]
+
+(*) It is only appropriate to use these values in explicitly-
+    configured experiments; they MUST NOT be shipped as defaults in
+    implementations.  See RFC 3692 for details.
+
+
+TCP ALTERNATE CHECKSUM NUMBERS
+
+Number  Description      Reference
+------- ------------------------------- ----------
+   0    TCP Checksum                    [RFC-1146]
+   1    8-bit Fletchers's algorithm     [RFC-1146]
+   2    16-bit Fletchers's algorithm    [RFC-1146]
+   3    Redundant Checksum Avoidance    [Kay]
+
+*/
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+// GTcpHdr
+// ----------------------------------------------------------------------------
+struct GTcpHdr : libnet_tcp_hdr {
+  bool isData(GIpHdr* ipHdr, uint8_t** tcpData = nullptr, int* tcpDataLen = nullptr);
+  bool isOption(uint8_t** tcpOption = nullptr, int* tcpOptionLen = nullptr);
+  uint16_t checksum(GIpHdr* ipHdr);
+
+  static int getOption( // Return one GTcpOption buffer size
+    uint8_t*    tcpOption,
+    int         tcpOptionLen,
+    GTcpOption& _tcpOption);
+
+  static int getOptionList( // Return total snoopTCPOption buffer size
+    uint8_t*        tcpOption,
+    int             tcpOptionLen,
+    GTcpOptionList& tcpOptionList);
+};
+
+// ----------------------------------------------------------------------------
+// GUdpHdr
+// ----------------------------------------------------------------------------
+struct GUdpHdr : libnet_udp_hdr {
+  bool isData(uint8_t** udpData = nullptr, int* udpDataLen = nullptr);
+  uint16_t checksum(GIpHdr* ipHdr);
+};
+
+// ----------------------------------------------------------------------------
+// GIcmpHdr
+// ----------------------------------------------------------------------------
+struct GIcmpHdr : libnet_icmpv4_hdr {
+public:
+  bool isData(GIpHdr* ipHdr, uint8_t** icmpData = nullptr, int* icmpDataLen = nullptr);
+  uint16_t checksum(GIpHdr* ipHdr);
+};
+
+// ----------------------------------------------------------------------------
+// GDnsHdr
+// ----------------------------------------------------------------------------
+struct GDnsHdr {
   u_int16_t id;             /* DNS packet ID */
   u_int16_t flags;          /* DNS flags */
   u_int16_t num_q;          /* Number of questions */
   u_int16_t num_answ_rr;    /* Number of answer resource records */
   u_int16_t num_auth_rr;    /* Number of authority resource records */
   u_int16_t num_addi_rr;    /* Number of additional resource records */
-} DNS_HDR;
+};
+
+// ----------------------------------------------------------------------------
+// GDnsQuestion
+// ----------------------------------------------------------------------------
+struct GDnsQuestion {
+  QString  name;
+  uint16_t type;
+  uint16_t _class;
+
+public:
+  QByteArray encode();
+  bool       decode(uint8_t* udpData, int dataLen, int* offset);
+};
+
+// ----------------------------------------------------------------------------
+// GDnsQuestions
+// ----------------------------------------------------------------------------
+struct GDnsQuestions : QList<int> {
+  QByteArray encode();
+  bool       decode(uint8_t* udpData, int dataLen, int count, int* offset);
+};
+
+// ----------------------------------------------------------------------------
+// GDnsResourceRecord
+// ----------------------------------------------------------------------------
+struct GDnsResourceRecord {
+  QString  name;
+  uint16_t type;
+  uint16_t _class;
+  uint32_t ttl;
+  uint16_t dataLength;
+  QByteArray data;
+
+public:
+  QByteArray encode();
+  bool       decode(uint8_t* udpData, int dataLen, int* offset);
+};
+
+// ----------------------------------------------------------------------------
+// GDnsResourceRecords
+// ----------------------------------------------------------------------------
+struct GDnsResourceRecords : QList<GDnsResourceRecord> {
+public:
+  QByteArray encode();
+  bool       decode(uint8_t* udpData, int dataLen, int count, int* offset);
+};
+
+// ----------------------------------------------------------------------------
+// GDns
+// ----------------------------------------------------------------------------
+struct GDnsInfo {
+public:
+  GDnsHdr dnsHdr;
+  GDnsQuestions questions;
+  GDnsResourceRecords answers;
+  GDnsResourceRecords authorities;
+  GDnsResourceRecords additionals;
+
+public:
+  QByteArray encode();
+  bool       decode(uint8_t* udpData, int dataLen, int* offset);
+
+public:
+  static QByteArray encodeName(QString name);
+  static QString    decodeName(uint8_t* udpData, int dataLen, int* offset);
+};
 
 #pragma pack(pop)
