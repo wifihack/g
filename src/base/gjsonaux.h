@@ -37,6 +37,8 @@ QJsonValueRef operator >> (QJsonValueRef ref, QSplitter* splitter);
 // QWidget
 // ----------------------------------------------------------------------------
 #include <QWidget>
+QJsonObject operator << (const QJsonObject json, const QWidget* widget);
+QJsonObject operator >> (QJsonObject json, QWidget* widget);
 QJsonValueRef operator << (const QJsonValueRef ref, const QWidget* widget);
 QJsonValueRef operator >> (QJsonValueRef ref, QWidget* widget);
 

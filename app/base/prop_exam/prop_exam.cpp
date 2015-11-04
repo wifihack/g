@@ -17,13 +17,13 @@ int main(int argc, char *argv[]) {
   party.load(partyJson);
 
   GPropWidget widget;
-  widgetJson >> widget;
+  widgetJson >> &widget;
   widget.setObject(&party);
   widget.show();
   int res = a.exec();
 
   party.save(partyJson);
-  widgetJson << widget;
+  widgetJson << &widget;
   json["party"] = partyJson;
   json["widget"] = widgetJson;
   GJson::instance().saveToFile(json);

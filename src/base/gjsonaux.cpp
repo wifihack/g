@@ -73,9 +73,7 @@ QJsonValueRef operator >> (const QJsonValueRef ref, QSplitter* splitter) {
 // ----------------------------------------------------------------------------
 #include <QPoint>
 #include <QSize>
-QJsonValueRef operator << (QJsonValueRef ref, const QWidget* widget) {
-  QJsonObject json;
-
+QJsonObject operator << (const QJsonObject json, const QWidget* widget) {
   QPoint pos = widget->pos();
   json["left"] = pos.x();
   json["top"] = pos.y();
@@ -84,13 +82,10 @@ QJsonValueRef operator << (QJsonValueRef ref, const QWidget* widget) {
   json["width"] = size.width();
   json["height"] = size.height();
 
-  ref = json;
-  return ref;
+  return json;
 }
 
-QJsonValueRef operator >> (QJsonValueRef ref, QWidget* widget) {
-  QJsonObject json = ref.toObject();
-
+QJsonObject operator >> (QJsonObject json, QWidget* widget) {
   if (!json.isEmpty()) {
     QPoint pos;
     pos.setX(json["left"].toInt());
@@ -103,6 +98,19 @@ QJsonValueRef operator >> (QJsonValueRef ref, QWidget* widget) {
     widget->resize(size);
   }
 
+  return json;
+}
+
+QJsonValueRef operator << (QJsonValueRef ref, const QWidget* widget) {
+  QJsonObject json;
+  json << widget;
+  ref = json;
+  return ref;
+}
+
+QJsonValueRef operator >> (QJsonValueRef ref, QWidget* widget) {
+  QJsonObject json = ref.toObject();
+  json >> widget;
   return ref;
 }
 

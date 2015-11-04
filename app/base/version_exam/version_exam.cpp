@@ -2,5 +2,5 @@
 #include <GBase>
 
 int main() {
-  std::cout << GVERSION << std::endl;
+  std::cout << G_VERSION << std::endl;
 }

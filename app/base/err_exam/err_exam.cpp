@@ -1,4 +1,4 @@
-#include <iostream>
+#include <QDebug>
 #include <GErr>
 
 using namespace std;
@@ -9,28 +9,28 @@ struct Obj {
     return err_;
   }
 private:
-  GStdErr err_ { g::FAIL, "NOT_SUPPORTED in Obj class" };
+  GStdErr err_ { GErr::FAIL, "NOT_SUPPORTED in Obj class" };
 };
 
 int main() {
   {
     GStdErr err;
-    clog << err << endl;
+    qDebug() << err << endl;
   }
 
   {
-    GStdErr err{ g::NOT_SUPPORTED };
-    clog << err << endl;
+    GStdErr err{ GErr::NOT_SUPPORTED };
+    qDebug() << err << endl;
   }
 
   {
-    GStdErr err { g::NOT_SUPPORTED, "NOT_SUPPORTED" };
-    clog << err << endl;
+    GStdErr err { GErr::NOT_SUPPORTED, "NOT_SUPPORTED" };
+    qDebug() << err << endl;
   }
 
   {
     Obj obj;
     GErr& err = obj.err();
-    clog << err << endl;
+    qDebug() << err << endl;
   }
 }
